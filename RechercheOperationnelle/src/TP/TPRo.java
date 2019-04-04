@@ -31,7 +31,7 @@ public class TPRo {
 
         //Algo plus proche voisin
        //Algo ppv = new PPV(villes);
-       //ArrayList<Ville> cheminPPV = ppv.run();
+      // ArrayList<Ville> cheminPPV = ppv.run();
 
        //Algo opti locale
         //Algo optiLocale = new Algo_OptiLocale(villes,cheminPPV);

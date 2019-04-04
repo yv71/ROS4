@@ -37,10 +37,6 @@ public class PPV extends Algo{
         }
         this.addDist(CalculDistance.CalculDist(rez.get(0),rez.get(rez.size()-1)));
         System.out.println(this);
-        for (Ville vAffiche : rez
-             ) {
-            System.out.println("Prochaine ville du chemin : " + vAffiche);
-        }
         return rez;
     }
 

@@ -8,33 +8,20 @@ import java.util.Collections;
 
 public class Algo_OptiLocale extends Algo{
 
-    private double coutInit;
     private ArrayList<Ville> path;
     public Algo_OptiLocale(ArrayList<Ville> villes, ArrayList<Ville> path) {
-
         super(villes);
         this.path = path;
-        coutInit = this.gloutonDuPauvre(path);
-
     }
 
     @Override
     public ArrayList<Ville> run() {
-        ArrayList<Ville> rez = path;
-        boolean fini = false;
-        while(!fini){
-            ArrayList<Ville> test = this.explore();
-            if (test == rez){
-                this.addDist(this.gloutonDuPauvre(test));
-                rez = test;
-                fini = true;
-            }
-        }
-        for (Ville v: rez
-             ) {
-            System.out.println("Prochaine ville du chemin : " + v);
-        }
+        ArrayList<Ville> rez ;
+        ArrayList<Ville> test = this.explore();
+        this.addDist(this.gloutonDuPauvre(test));
+        rez = test;
         System.out.println("Distance totale : " + this.getDistMax());
+        path = rez;
         return rez;
     }
 
@@ -51,13 +38,12 @@ public class Algo_OptiLocale extends Algo{
         ArrayList<Ville> localPath ;
         ArrayList<Ville> rez = path;
         for(int i = 0; i < rez.size()-3;i++){
-            double dist =0;
             localPath = new ArrayList<>();
             localPath.add(rez.get(i));
             localPath.add(rez.get(i+1));
             localPath.add(rez.get(i+2));
             localPath.add(rez.get(i+3));
-            dist = this.gloutonDuPauvre(localPath);
+            double dist = this.gloutonDuPauvre(localPath);
             Collections.swap(localPath,1,2);
             double newDist = this.gloutonDuPauvre(localPath);
             if (newDist < dist){

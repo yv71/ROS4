@@ -27,4 +27,8 @@ public class Generation {
     public ArrayList<Ville> getPath() {
         return path;
     }
+
+    public Ville getVille(int indice){
+        return this.path.get(indice);
+    }
 }
