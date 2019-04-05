@@ -1,6 +1,7 @@
 package TP.ville;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Ville {
     private int numero;
@@ -76,5 +77,21 @@ public class Ville {
             }
         }
         return rez;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ville ville = (Ville) o;
+        return numero == ville.numero &&
+                Double.compare(ville.lattitude, lattitude) == 0 &&
+                Double.compare(ville.longitude, longitude) == 0 &&
+                Objects.equals(nom, ville.nom);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numero, nom, lattitude, longitude);
     }
 }

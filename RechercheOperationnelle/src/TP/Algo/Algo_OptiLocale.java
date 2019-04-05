@@ -9,6 +9,15 @@ import java.util.Collections;
 public class Algo_OptiLocale extends Algo{
 
     private ArrayList<Ville> path;
+
+    public Algo_OptiLocale(ArrayList<Ville> villes) {
+        super(villes);
+    }
+
+    public void setPath(ArrayList<Ville> path){
+        this.path = path;
+    }
+
     public Algo_OptiLocale(ArrayList<Ville> villes, ArrayList<Ville> path) {
         super(villes);
         this.path = path;
@@ -16,13 +25,10 @@ public class Algo_OptiLocale extends Algo{
 
     @Override
     public ArrayList<Ville> run() {
-        ArrayList<Ville> rez ;
-        ArrayList<Ville> test = this.explore();
-        this.addDist(this.gloutonDuPauvre(test));
-        rez = test;
-        System.out.println("Distance totale : " + this.getDistMax());
-        path = rez;
-        return rez;
+        ArrayList<Ville> explore = this.explore();
+        this.addDist(this.gloutonDuPauvre(explore));
+        path = explore;
+        return explore;
     }
 
     public double gloutonDuPauvre(ArrayList<Ville> in){
@@ -52,4 +58,12 @@ public class Algo_OptiLocale extends Algo{
         }
         return rez;
     }
+
+    @Override
+    public String toString() {
+        for (Ville v:
+             path) {
+            System.out.println(v);
+        }
+        return "Distance avec la méthode du plus proche voisin : "  + this.getDistMax();}
 }
