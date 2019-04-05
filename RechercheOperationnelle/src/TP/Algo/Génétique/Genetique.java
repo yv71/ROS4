@@ -13,7 +13,7 @@ public class Genetique extends Algo {
     private int nbVilles;
     private int nbGen = 100000;
     private int nbFirstGen = 1000;
-    private int nbIndiv = 500;
+    private int nbIndiv = 250;
     private int nbReprod =500;
     private int dureeMutLongMax = 20;
     private int nbMutLongueMax = 50;
@@ -25,12 +25,10 @@ public class Genetique extends Algo {
         optiLocale = new Algo_OptiLocale(villes);
     }
 
-    @Override
-    public ArrayList<Ville> run() {
+    public ArrayList<Individu> premiereGeneration(){
+
         ArrayList<Individu> currentGen = new ArrayList<>();
         Individu shuffle;
-        Random r = new Random();
-        //Première génération
         for(int i = 0 ; i < nbFirstGen; i++){
             Ville dijon = this.getVilles().get(0);
             shuffle = new Individu(this.getVilles());
@@ -40,50 +38,65 @@ public class Genetique extends Algo {
             currentGen.add(shuffle);
         }
 
+        return currentGen;
+    }
+
+    public ArrayList<Ville> reproduction(ArrayList<Individu> currentGen) {
+        Random r = new Random();
+        int mere = r.nextInt(currentGen.size());
+        int pere;
+        do {
+            pere = r.nextInt(currentGen.size());
+        } while (pere == mere);
+
+        int indicePere = r.nextInt((this.nbVilles) - 20);
+        int dureePere = r.nextInt(this.nbVilles - indicePere - 2) + 1;
+        Individu genMere = currentGen.get(mere);
+        Individu genPere = currentGen.get(pere);
+
+        ArrayList<Ville> newPath = new ArrayList<>();
+        ArrayList<Ville> tronconPere = new ArrayList<>();
+
+        for (int i = indicePere; i < indicePere + dureePere; i++) {
+            tronconPere.add(genPere.getVille(i));
+        }
+
+        for (int i = 0; i < (this.nbVilles); i++) {
+            Ville vMere = genMere.getVille(i);
+            Ville dPere = tronconPere.get(0);
+            if (tronconPere.contains(genMere.getVille(i))) {
+                if (vMere == dPere) {
+                    newPath.addAll(tronconPere);
+                }
+            } else {
+                newPath.add(genMere.getVille(i));
+            }
+
+        }
+        return newPath;
+    }
+    @Override
+    public ArrayList<Ville> run() {
+
+        Random r = new Random();
+        //Première génération
+
+        ArrayList<Individu> generation = this.premiereGeneration();
+
 
         //afficheGen(currentIndividu);
         int nb =0;
         while(nb < nbGen){
-            for (Individu chemin: currentGen) {
+            for (Individu chemin: generation) {
                 chemin.calculDist();
             }
-            ArrayList<Individu> newGen = this.getBest(currentGen,nbIndiv);
-            currentGen = new ArrayList<>(newGen);
+            ArrayList<Individu> newGen = this.getBest(generation,nbIndiv);
+            generation = new ArrayList<>(newGen);
 
             //Reproduction
             for(int nbIndiv = 0; nbIndiv < nbReprod; nbIndiv++){
-                int mere = r.nextInt(currentGen.size());
-                int pere;
-                do {
-                    pere = r.nextInt(currentGen.size());
-                }while(pere == mere);
 
-                int indicePere = r.nextInt((this.nbVilles)-20);
-                int dureePere = r.nextInt(this.nbVilles-indicePere-2)+1;
-                Individu genMere = currentGen.get(mere);
-                Individu genPere = currentGen.get(pere);
-
-                ArrayList<Ville> newPath = new ArrayList<>();
-                ArrayList<Ville> tronconPere = new ArrayList<>();
-
-                for(int i=indicePere; i < indicePere + dureePere ; i++){
-                    tronconPere.add(genPere.getVille(i));
-                }
-
-                for(int i = 0; i < (this.nbVilles);i++){
-                    Ville vMere = genMere.getVille(i);
-                    Ville dPere = tronconPere.get(0);
-                    if(tronconPere.contains(genMere.getVille(i))){
-                        if (vMere == dPere)
-                        {
-                            newPath.addAll(tronconPere);
-                        }
-                    }
-                    else{
-                        newPath.add(genMere.getVille(i));
-                    }
-
-                }
+                ArrayList<Ville> enfant = this.reproduction(generation);
 
 
                 //Mutation
@@ -106,24 +119,24 @@ public class Genetique extends Algo {
                 **/
                 //Collections.shuffle(newPath);
                // newPath.add(1,dijon);
-                this.optiLocale.setPath(newPath);
-                //ArrayList<Ville> opti = optiLocale.run();
-                //newPath = opti;
+                this.optiLocale.setPath(enfant);
+                ArrayList<Ville> opti = optiLocale.run();
+                enfant = opti;
 
-                Individu nouvelIndividu = new Individu(newPath);
-                currentGen.add(nouvelIndividu);
+                Individu nouvelIndividu = new Individu(enfant);
+                generation.add(nouvelIndividu);
             }
 
-            Individu meilleureDeSaGen = this.getBest(currentGen,1).get(0);
+            Individu meilleureDeSaGen = this.getBest(generation,1).get(0);
             System.out.println("Generation : " + nb + " Dist min : " + meilleureDeSaGen.getDist());
             nb++;
 
         }
 
-        Individu meilleurePersonne = this.getBest(currentGen,1).get(0);
+        Individu meilleurePersonne = this.getBest(generation,1).get(0);
         System.out.println(meilleurePersonne.getDist());
 
-        return null;
+        return meilleurePersonne.getPath();
     }
 
     public void afficheGen(ArrayList<Individu> individus){
